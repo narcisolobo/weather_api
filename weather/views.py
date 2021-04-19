@@ -9,15 +9,22 @@ with open('config.json') as config:
 def index(request):
     if 'city' not in request.session:
         request.session['city'] = 'Chicago'
-    city = request.session['city']
+
     base_url = 'http://api.openweathermap.org/data/2.5/weather/?'
+    city = request.session['city']
     api_key = config['API_KEY']
     units = 'imperial'
 
-    r = requests.get(f'{base_url}q={city}&appid={api_key}&units={units}').json()
-    print(r)
-    id_num = r['weather'][0]['id']
+    payload = {
+        'q': city,
+        'appid': api_key,
+        'units': units
+        }
+
+    r = requests.get(base_url, params=payload).json()
+
     desc = r['weather'][0]['main']
+
     weather = {
         'city': city,
         'temp': r['main']['temp'],
